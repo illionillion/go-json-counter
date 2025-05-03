@@ -8,16 +8,25 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
+// 構造体の定義変更（外側と分離）
+type NameCount struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
 type Counter struct {
-	Count int `json:"count"`
+	Count int         `json:"count"`
+	Data  []NameCount `json:"data"`
 }
 
 func counterHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 対象パスチェック
-	if r.URL.Path != "/" {
+	path := r.URL.Path
+	if path != "/" && !strings.HasPrefix(path, "/user/") {
 		http.NotFound(w, r)
 		return
 	}
@@ -44,8 +53,29 @@ func counterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse JSON", http.StatusInternalServerError)
 		return
 	}
-	// countの値を1増やす
-	counter.Count++
+
+	// もしnameのパスパラメタがある場合は取得
+	name := r.PathValue("name")
+	if name != "" {
+		fmt.Println("name: ", name)
+		// 名前の処理
+		found := false
+		for i, data := range counter.Data {
+			if data.Name == name {
+				counter.Data[i].Count++
+				found = true
+				break
+			}
+		}
+		if !found && name != "" {
+			counter.Data = append(counter.Data, NameCount{Name: name, Count: 1})
+		}
+
+	} else {
+		// countの値を1増やす
+		counter.Count++
+	}
+
 	// data.jsonにフォーマットして書き込む
 	jsonData, err = json.MarshalIndent(counter, "", "  ")
 	if err != nil {
@@ -66,13 +96,12 @@ func counterHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 	fmt.Println("Count: ", counter.Count)
 	fmt.Println("data.json: ", string(jsonData))
-
 }
 
 func main() {
 	http.HandleFunc("/", counterHandler)
+	http.HandleFunc("/user/{name}", counterHandler)
 	fmt.Println("Server Start Up........")
-	// envファイル環境変数からポート番号を取得
 	port := os.Getenv("PORT")
 	fmt.Println("PORT: ", port)
 	if port == "" {
