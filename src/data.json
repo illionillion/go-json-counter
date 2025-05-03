@@ -1,5 +1,5 @@
 {
-  "count": 81,
+  "count": 101,
   "data": [
     {
       "name": "hoge",
@@ -7,7 +7,7 @@
     },
     {
       "name": "aaaa",
-      "count": 18
+      "count": 28
     },
     {
       "name": "john",
@@ -16,6 +16,10 @@
     {
       "name": "aaaaa",
       "count": 3
+    },
+    {
+      "name": "aa",
+      "count": 5
     }
   ]
 }
