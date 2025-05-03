@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-func getDataFilePath() (string, error) {
+func GetDataFilePath() (string, error) {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		return "", fmt.Errorf("cannot get runtime caller info")
@@ -17,7 +17,7 @@ func getDataFilePath() (string, error) {
 	return filepath.Join(basePath, "data.json"), nil
 }
 
-func readCounter(filePath string) (Counter, error) {
+func ReadCounter(filePath string) (Counter, error) {
 	var c Counter
 	data, err := os.ReadFile(filePath)
 	if err != nil {
@@ -27,7 +27,7 @@ func readCounter(filePath string) (Counter, error) {
 	return c, err
 }
 
-func writeCounter(filePath string, c Counter) ([]byte, error) {
+func WriteCounter(filePath string, c Counter) ([]byte, error) {
 	data, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		return nil, err
