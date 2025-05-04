@@ -19,10 +19,20 @@ func GetDataFilePath() (string, error) {
 
 func ReadCounter(filePath string) (Counter, error) {
 	var c Counter
+
 	data, err := os.ReadFile(filePath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			// ファイルがない場合、初期化して保存
+			c = Counter{Count: 0, Data: []NameCount{}}
+			if _, writeErr := WriteCounter(filePath, c); writeErr != nil {
+				return c, writeErr
+			}
+			return c, nil
+		}
 		return c, err
 	}
+
 	err = json.Unmarshal(data, &c)
 	return c, err
 }
