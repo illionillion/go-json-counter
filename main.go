@@ -14,9 +14,9 @@ func main() {
 	http.HandleFunc("/user/{name}", server.CounterHandler)
 	fmt.Println("Server Start Up........")
 	port := os.Getenv("PORT")
-	fmt.Println("PORT: ", port)
 	if port == "" {
 		port = "8080"
 	}
-	log.Fatal(http.ListenAndServe("localhost:"+port, nil))
+	fmt.Println("PORT: ", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

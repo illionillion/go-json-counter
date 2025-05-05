@@ -1,0 +1,13 @@
+services:
+  app:
+    container_name: my_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
+    # volumes:
+    #   - .:/app
+    restart: unless-stopped
