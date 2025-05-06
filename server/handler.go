@@ -19,7 +19,9 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 対象パスチェック
 	path := r.URL.Path
-	if path != "/" && !strings.HasPrefix(path, "/user/") {
+	// もしnameのパスパラメタがある場合は取得
+	name := r.PathValue("name")
+	if path != "/" && !strings.HasPrefix(path, "/user/") || strings.HasPrefix(path, "/user/") && name == "" {
 		http.NotFound(w, r)
 		return
 	}
@@ -37,8 +39,7 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to read data.json", http.StatusInternalServerError)
 		return
 	}
-	// もしnameのパスパラメタがある場合は取得
-	name := r.PathValue("name")
+
 	if name != "" {
 		counter.IncrementByName(name)
 	} else {
