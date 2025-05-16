@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 	http.HandleFunc("/", server.CounterHandler)
 	http.HandleFunc("/user/{name}", server.CounterHandler)
 	fmt.Println("Server Start Up........")
